@@ -1,0 +1,86 @@
+import pygame
+pygame.init()
+
+screenSize = (700, 480)
+win = pygame.display.set_mode(screenSize)
+pygame.display.set_caption("Kramer: First Game")
+
+#Image load is not pictured
+
+clock = pygame.time.Clock()
+
+#Character Properties
+x = 50
+y = 400
+width = 40
+height = 60
+vel = 7
+left = False
+right = False
+walkCount = 0
+
+#Jump Properties
+isJump = False
+jumpCount = 10
+
+run = True
+
+def redrawGameWindow():
+    global walkCount
+    win.blit(bg, (0,0))
+
+    if walkCount + 1 >= 27:
+        walkCount = 0
+    if left:
+        win.blit(walkLeft[walkCount // 3], (x,y))
+        walkCount += 1
+    elif right:
+        win.blit(waldakRight[walkCount // 3], (x,y))
+        walkCount += 1
+    else:
+        win.blit(char, (x, y))
+    pygame.display.update()
+
+#Main loop
+while run:
+    clock.tick(27)
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            run = False
+
+    keys = pygame.key.get_pressed()
+
+    if keys[pygame.K_LEFT] and x > vel:
+        x -= vel
+        left = True
+        right = False
+    elif keys[pygame.K_RIGHT] and x < screenSize[0] - width - vel:
+        x += vel
+        right = True
+        left = False
+    else:
+        right = False
+        left = False
+        walkCount = 0
+
+    if not (isJump):
+        if keys[pygame.K_UP]:
+            isJump = True
+            right = False
+            left = False
+            walkCount = 0
+    else:
+        if jumpCount >= -10:
+            neg = 1
+            if jumpCount < 0:
+                neg = -1
+            y -= (jumpCount ** 2) * 0.5 * neg
+            jumpCount -= 1
+        else:
+            isJump = False
+            jumpCount = 10
+
+    redrawGameWindow()
+
+pygame.quit()
